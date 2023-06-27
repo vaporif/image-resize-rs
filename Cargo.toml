@@ -1,0 +1,20 @@
+[package]
+name = "image-resize"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { version = "1.0.71", features = ["backtrace"] }
+aws-config = "0.55.3"
+aws-sdk-s3 = "0.28.0"
+image = "0.24.*"
+lambda_http = { version = "0.8.*", default-features = false, features = ["apigw_http"] }
+lambda_runtime = "0.8.1"
+regex = "1.8.4"
+thiserror = "1.0.40"
+tokio = { version = "1.28.*", features = ["macros"] }
+tower-http = { version = "0.4.1", features = ["trace"] }
+tracing = { version = "0.1", features = ["log"] }
+tracing-subscriber = { version = "0.3", default-features = false, features = ["fmt"] }
+url = "2.4.0"
+
