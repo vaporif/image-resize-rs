@@ -36,7 +36,6 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --features=testable
   fmt:
     name: Rustfmt
     runs-on: ubuntu-latest
