@@ -1,4 +1,4 @@
-use crate::{aws::S3Client, error::Error, request};
+use crate::{aws::S3Client, error::Error, request::ImageResizeRequest};
 use anyhow::{Context, Result};
 use image::{imageops::FilterType, DynamicImage};
 use lambda_http::Request;
@@ -11,15 +11,20 @@ pub async fn handle_resize(
     base_url: &Url,
     s3_client: &S3Client,
 ) -> Result<Url, Error> {
-    let resize_request = request::parse(event.uri().path())?;
-    tracing::debug!("request: {}", resize_request);
+    let resize_request = ImageResizeRequest::try_from(event.uri())?;
+    tracing::info!("request: {}", resize_request);
     let image_bytes = s3_client.get_image_bytes(&resize_request.image_key).await?;
-    let resized_bytes = resize(&image_bytes, resize_request.width, resize_request.height).await?;
+    let resized_bytes = resize(
+        &image_bytes,
+        resize_request.resolution.width,
+        resize_request.resolution.height,
+    )
+    .await?;
 
     let new_image_path = format!(
         "{width}x{heigth}/{image_key}",
-        width = resize_request.width,
-        heigth = resize_request.height,
+        width = resize_request.resolution.width,
+        heigth = resize_request.resolution.height,
         image_key = resize_request.image_key
     );
 
@@ -32,21 +37,23 @@ pub async fn handle_resize(
         new_image_path
     ))?;
 
+    tracing::info!("returning redirect result");
+
     Ok(new_image_url)
 }
 
 #[tracing::instrument(skip(bytes))]
 async fn resize(bytes: &[u8], nwidth: u16, nheight: u16) -> Result<Vec<u8>> {
     let format = image::guess_format(bytes).context("could not guess format")?;
-    tracing::debug!("format guessed");
+    tracing::info!("format guessed as {:?}", format);
     let image = image::load_from_memory(bytes).context("failed to load image from memory")?;
-    tracing::debug!("loaded in memory");
+    tracing::info!("loaded into memory");
     let image = image.resize(
         nwidth.into(),
         nheight.into(),
         get_filter_type(&image, nwidth.into(), nheight.into()),
     );
-    tracing::debug!("resized");
+    tracing::info!("resized");
     let mut result_image_cursor = Cursor::new(Vec::new());
     image
         .write_to(&mut result_image_cursor, format)
@@ -59,7 +66,7 @@ async fn resize(bytes: &[u8], nwidth: u16, nheight: u16) -> Result<Vec<u8>> {
         .read_to_end(&mut bytes)
         .await
         .context("should get all bytes of resized image")?;
-    tracing::debug!("result image saved into memory");
+    tracing::info!("result image saved into memory");
     Ok(bytes)
 }
 

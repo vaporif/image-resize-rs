@@ -24,16 +24,23 @@ async fn function_handler(
             .header("location", url.to_string())
             .body("".into())
             .map_err(Box::new)?),
-        Err(e) => match e {
-            error::Error::NotFound(e) => {
-                tracing::error!("Image not found, {}", e);
-                Ok(Response::builder()
+        Err(e) => {
+            tracing::error!("{:?}", e);
+            match e {
+                error::Error::NotFound(_) => Ok(Response::builder()
                     .status(404)
                     .body("".into())
-                    .map_err(Box::new)?)
+                    .map_err(Box::new)?),
+                error::Error::UnsupportedResolution => Ok(Response::builder()
+                    .status(400)
+                    .body("Unsupported resolution".into())
+                    .map_err(Box::new)?),
+                _ => Ok(Response::builder()
+                    .status(500)
+                    .body("Internal Server Error".into())
+                    .map_err(Box::new)?),
             }
-            other => Err(Error::from(other)),
-        },
+        }
     }
 }
 

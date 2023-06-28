@@ -5,6 +5,8 @@ use thiserror::Error;
 pub enum Error {
     #[error(transparent)]
     NotFound(NoSuchKey),
+    #[error("unsupported resolution")]
+    UnsupportedResolution,
     #[error(transparent)]
     Other(#[from] anyhow::Error),
 }

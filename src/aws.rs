@@ -36,10 +36,10 @@ impl S3Client {
             .body
             .collect()
             .await
-            .context("Failed to load image data")?
+            .context("failed to load image data")?
             .into_bytes();
 
-        tracing::info!("Image downloaded");
+        tracing::info!("image downloaded");
         Ok(bytes.into())
     }
 
@@ -57,9 +57,9 @@ impl S3Client {
             .body(stream)
             .send()
             .await
-            .context("Failed to upload image")?;
+            .context("failed to upload image")?;
 
-        tracing::info!("Image uploaded");
+        tracing::info!("image uploaded");
         Ok(())
     }
 }
