@@ -6,6 +6,21 @@ const BUCKET_ENV_VAR: &str = "BUCKET";
 const REGION_ENV_VAR: &str = "LAMBDA_REGION";
 const URL_ENV_VAR: &str = "URL";
 
+pub async fn get_configs() -> Result<(aws_sdk_s3::Config, Bucket, Url)> {
+    let region = get_region()?;
+
+    let aws_config = aws_config::defaults(aws_config::BehaviorVersion::v2023_11_09())
+        .region(region)
+        .load()
+        .await;
+    let config = aws_sdk_s3::Config::new(&aws_config);
+
+    let bucket = Bucket::load()?;
+    let base_url = get_base_url()?;
+
+    Ok((config, bucket, base_url))
+}
+
 pub struct Bucket(pub String);
 
 impl Bucket {
@@ -17,7 +32,7 @@ impl Bucket {
     }
 }
 
-pub fn get_base_url() -> Result<Url> {
+fn get_base_url() -> Result<Url> {
     let base_url =
         std::env::var(URL_ENV_VAR).context(format!("env var {} not found", URL_ENV_VAR))?;
     tracing::info!("URL is {}", base_url);
@@ -29,7 +44,7 @@ pub fn get_base_url() -> Result<Url> {
     Ok(base_url)
 }
 
-pub fn get_region() -> Result<Region> {
+fn get_region() -> Result<Region> {
     let region =
         std::env::var(REGION_ENV_VAR).context(format!("env var {} not found", REGION_ENV_VAR))?;
 

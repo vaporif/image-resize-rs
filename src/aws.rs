@@ -75,6 +75,7 @@ mod tests {
             Credentials::new("test".to_string(), "test".to_string(), None, None, "local");
 
         let test_config = ConfigLoader::default()
+            .behavior_version(aws_config::BehaviorVersion::v2023_11_09())
             .endpoint_url("http://localhost:4566")
             .region("us-east-1")
             .credentials_provider(credentials)
