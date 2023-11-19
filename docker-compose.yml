@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  localstack:
+    container_name: localstack
+    image: public.ecr.aws/localstack/localstack:2.3
+    environment:
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - SERVICES=s3
+      - LS_LOG=trace
+    ports:
+      - '4566-4597:4566-4597'
+      - 9090:8090
+    volumes:
+      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    healthcheck:
+      test:
+        - CMD
+        - bash
+        - -c
+        - awslocal s3 ls s3://bucket
+      interval: 5s
+      timeout: 30s
+      start_period: 10s
+      retries: 10
