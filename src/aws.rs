@@ -1,6 +1,5 @@
 use anyhow::{Context, Result};
-use aws_config::SdkConfig;
-use aws_sdk_s3::{operation::get_object::GetObjectError, primitives::ByteStream, Client};
+use aws_sdk_s3::{operation::get_object::GetObjectError, primitives::ByteStream, Client, Config};
 
 use crate::{config::Bucket, error::Error};
 
@@ -10,8 +9,8 @@ pub struct S3Client {
 }
 
 impl S3Client {
-    pub async fn new(sdk_config: &SdkConfig, bucket: Bucket) -> Self {
-        let client = aws_sdk_s3::client::Client::new(sdk_config);
+    pub fn new(config: Config, bucket: Bucket) -> Self {
+        let client = aws_sdk_s3::client::Client::from_conf(config);
         Self {
             client,
             bucket: bucket.0,
@@ -44,9 +43,9 @@ impl S3Client {
     }
 
     #[tracing::instrument(skip(self, bytes))]
-    pub async fn upload_image_bytes<I: Into<String> + std::fmt::Debug>(
+    pub async fn upload_image_bytes(
         &self,
-        image_key: I,
+        image_key: impl Into<String> + std::fmt::Debug,
         bytes: Vec<u8>,
     ) -> Result<()> {
         let stream = ByteStream::from(bytes);
@@ -63,64 +62,39 @@ impl S3Client {
         Ok(())
     }
 }
+
 #[cfg(test)]
 mod tests {
-    use core::panic;
-
-    use aws_config::{ConfigLoader, SdkConfig};
-    use aws_sdk_s3::{config::Credentials, operation::create_bucket::CreateBucketError};
+    use aws_config::ConfigLoader;
+    use aws_sdk_s3::{config::Credentials, Config};
 
     use crate::{aws::S3Client, config::Bucket};
 
-    async fn get_config() -> (SdkConfig, Bucket) {
+    async fn get_config() -> (Config, Bucket) {
         let credentials =
             Credentials::new("test".to_string(), "test".to_string(), None, None, "local");
 
         let test_config = ConfigLoader::default()
-            // .endpoint_url("http://localhost:4566")
+            .endpoint_url("http://localhost:4566")
             .region("us-east-1")
             .credentials_provider(credentials)
             .load()
             .await;
-        (test_config, Bucket("test".into()))
+
+        let test_config = aws_sdk_s3::config::Builder::from(&test_config)
+            .force_path_style(true)
+            .build();
+
+        (test_config, Bucket("bucket".to_string()))
     }
 
-    async fn ensure_bucket_exists() {
-        let (config, bucket) = get_config().await;
-
-        let client = aws_sdk_s3::client::Client::new(&config);
-
-        let _r = client
-            .list_buckets()
-            .send()
-            .await
-            .expect("list buckets")
-            .buckets()
-            .expect("buckets found")
-            .len();
-
-        if let Err(CreateBucketError::Unhandled(unhandled_error)) = client
-            .create_bucket()
-            .bucket(bucket.0)
-            .send()
-            .await
-            .map_err(|e| e.into_service_error())
-        {
-            panic!("failed to create bucket, error - {:?}", unhandled_error);
-        }
-    }
-
-    // TODO: Find out why minio/localstack are not working
-    #[ignore]
     #[tokio::test]
     async fn test_upload_and_download() {
-        ensure_bucket_exists().await;
-
         let (config, bucket) = get_config().await;
 
-        let s3_client = S3Client::new(&config, bucket).await;
+        let s3_client = S3Client::new(config, bucket);
 
-        let image_key = "random_key".to_owned();
+        let image_key = "random_key".to_string();
         let bytes = vec![1, 3, 4];
 
         s3_client

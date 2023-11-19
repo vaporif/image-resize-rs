@@ -1,25 +1,25 @@
 [package]
 name = "image-resize"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2021"
 
 [dependencies]
-anyhow = { version = "1.0.71", features = ["backtrace"] }
-aws-config = "0.55.3"
-aws-sdk-s3 = "0.28.0"
-image = "0.24.6"
-lambda_http = { version = "0.8.1", default-features = false, features = ["apigw_http"] }
-lambda_runtime = "0.8.1"
-regex = "1.9.1"
-serde = { version = "1.0.171", features = ["derive"] }
-serde_json = "1.0.102"
-thiserror = "1.0.40"
-tokio = { version = "1.29", features = ["macros"] }
-tower-http = { version = "0.4.1", features = ["trace"] }
+anyhow = { version = "1", features = ["backtrace"] }
+aws-config = "0.57"
+aws-sdk-s3 = "0.36"
+image = "0.24"
+lambda_http = { version = "0.8", default-features = false, features = ["apigw_http"] }
+lambda_runtime = "0.8"
+regex = "1.10"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "1"
+tokio = { version = "1", features = ["macros"] }
+tower-http = { version = "0.4", features = ["trace"] }
 tracing = { version = "0.1", features = ["log"] }
 tracing-subscriber = { version = "0.3", default-features = false, features = ["fmt"] }
-url = "2.4.0"
+url = "2.4"
 
 [dev-dependencies]
-serial_test = "2.0.0"
+serial_test = "2"
 

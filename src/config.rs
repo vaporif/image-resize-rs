@@ -1,7 +1,9 @@
 use anyhow::{Context, Result};
+use aws_sdk_s3::config::Region;
 use url::Url;
 
 const BUCKET_ENV_VAR: &str = "BUCKET";
+const REGION_ENV_VAR: &str = "LAMBDA_REGION";
 const URL_ENV_VAR: &str = "URL";
 
 pub struct Bucket(pub String);
@@ -25,4 +27,11 @@ pub fn get_base_url() -> Result<Url> {
     ))?;
 
     Ok(base_url)
+}
+
+pub fn get_region() -> Result<Region> {
+    let region =
+        std::env::var(REGION_ENV_VAR).context(format!("env var {} not found", REGION_ENV_VAR))?;
+
+    Ok(Region::new(region))
 }

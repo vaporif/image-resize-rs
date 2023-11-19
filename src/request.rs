@@ -86,7 +86,6 @@ fn get_permitted_resolutions() -> Option<Vec<Resolution>> {
                 Some(v)
             }
             Err(e) => {
-                dbg!(&e);
                 tracing::error!(
                     "env var {} with value {} has failed to deserialize: {}",
                     RESOLUTIONS_ENV_VAR,
@@ -111,15 +110,14 @@ fn get_permitted_resolutions() -> Option<Vec<Resolution>> {
 
 #[cfg(test)]
 mod tests {
-    use std::matches;
-
-    use serial_test::serial;
-
     use super::*;
+    use serial_test::serial;
+    use std::matches;
 
     #[test]
     #[serial]
     fn when_proper_path_and_no_resolutions_limit() {
+        std::env::remove_var("RESOLUTIONS");
         let url: Uri = Uri::from_static("https://some-domain.com/200x300/key.png");
         let image_request = ImageResizeRequest::try_from(&url).expect("url parsed");
 
