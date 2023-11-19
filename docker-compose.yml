@@ -26,3 +26,15 @@ services:
       timeout: 30s
       start_period: 10s
       retries: 10
+  terraform:
+    container_name: terraform
+    image: public.ecr.aws/hashicorp/terraform:1.6
+    entrypoint: /bin/sh -c
+    depends_on:
+      localstack:
+        condition: service_healthy
+    command:
+      - terraform init && terraform apply -auto-approve
+    volumes:
+      - ./terraform/:/terraform
+    working_dir: /terraform/

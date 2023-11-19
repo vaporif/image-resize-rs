@@ -32,6 +32,10 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
+      - name: Start localstack
+        run: docker-compose up localstack -d --wait --quiet-pull
+      - name: Apply terraform to localstack
+        run: docker-compose up terraform
       - name: Run cargo test
         uses: actions-rs/cargo@v1
         with:
