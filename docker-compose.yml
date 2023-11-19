@@ -21,10 +21,10 @@ services:
         - CMD
         - bash
         - -c
-        - awslocal s3 ls s3://bucket
+        - awslocal s3 ls 
       interval: 5s
-      timeout: 30s
-      start_period: 10s
+      timeout: 120s
+      start_period: 20s
       retries: 10
   terraform:
     container_name: terraform
