@@ -17,6 +17,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      - uses: KengoTODA/actions-setup-docker-compose@v1
+        with:
+          version: '2.14.2'
       - name: Cache dependencies
         id: cache-dependencies
         uses: actions/cache@v3
@@ -32,6 +35,8 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
+      - name: Start localstack & apply tf
+        run: docker-compose up -d --wait --quiet-pull
       - name: Run cargo test
         uses: actions-rs/cargo@v1
         with:

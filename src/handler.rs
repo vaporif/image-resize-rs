@@ -37,7 +37,7 @@ pub async fn handle_resize(
         new_image_path
     ))?;
 
-    tracing::info!("returning redirect result");
+    tracing::info!("new image url is {}", &new_image_url);
 
     Ok(new_image_url)
 }
@@ -82,10 +82,8 @@ fn get_filter_type(image: &DynamicImage, nwidth: u32, nheight: u32) -> FilterTyp
 
 #[cfg(test)]
 mod tests {
-
-    use std::assert_eq;
-
     use super::*;
+    use std::assert_eq;
 
     #[tokio::test]
     async fn test_resize() {

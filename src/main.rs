@@ -1,5 +1,5 @@
 use aws::S3Client;
-use config::{get_base_url, Bucket};
+use config::get_configs;
 use handler::handle_resize;
 use lambda_http::{run, Body, Error, Request, Response};
 use lambda_runtime::tower::ServiceBuilder;
@@ -52,12 +52,8 @@ async fn main() -> Result<(), Error> {
         .without_time()
         .init();
 
-    let aws_config = aws_config::load_from_env().await;
-
-    let bucket = Bucket::load()?;
-    let s3_client = S3Client::new(&aws_config, bucket).await;
-
-    let base_url = get_base_url()?;
+    let (config, bucket, base_url) = get_configs().await?;
+    let s3_client = S3Client::new(config, bucket);
 
     let layer = TraceLayer::new_for_http()
         .on_request(DefaultOnRequest::new().level(Level::DEBUG))

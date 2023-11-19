@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  localstack:
+    container_name: localstack
+    image: public.ecr.aws/localstack/localstack:2.3
+    environment:
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - SERVICES=s3
+      - LS_LOG=trace
+    ports:
+      - '4566-4597:4566-4597'
+      - 9090:8090
+    volumes:
+      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    healthcheck:
+      test:
+        - CMD
+        - bash
+        - -c
+        - awslocal s3 ls 
+      interval: 5s
+      timeout: 60s
+      start_period: 20s
+      retries: 10
+  terraform:
+    container_name: terraform
+    image: public.ecr.aws/hashicorp/terraform:1.6
+    entrypoint: /bin/sh -c
+    depends_on:
+      localstack:
+        condition: service_healthy
+    command:
+      - terraform init && terraform apply -auto-approve
+    volumes:
+      - ./terraform/:/terraform
+    working_dir: /terraform/
