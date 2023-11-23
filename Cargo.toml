@@ -18,7 +18,7 @@ tokio = { version = "1", features = ["macros"] }
 tower-http = { version = "0.4", features = ["trace"] }
 tracing = { version = "0.1", features = ["log"] }
 tracing-subscriber = { version = "0.3", default-features = false, features = ["fmt"] }
-url = "2.4"
+url = "2.5"
 
 [dev-dependencies]
 serial_test = "2"
