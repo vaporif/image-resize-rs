@@ -22,7 +22,7 @@ jobs:
           version: '2.14.2'
       - name: Cache dependencies
         id: cache-dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/registry
