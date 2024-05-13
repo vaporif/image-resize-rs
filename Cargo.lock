@@ -432,7 +432,7 @@ version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "598e2ade8447dce8d3a15b6159b73354db34257851344b232fb1920c272acc61"
 dependencies = [
- "base64",
+ "base64 0.21.7",
  "bytes",
  "http 1.0.0",
  "http-body 1.0.0",
@@ -468,6 +468,12 @@ name = "base64"
 version = "0.21.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9d297deb1925b89f2ccc13d7635fa0714f12c87adce1c75356b39ca9b7178567"
+
+[[package]]
+name = "base64"
+version = "0.22.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
 
 [[package]]
 name = "base64-simd"
@@ -1231,7 +1237,7 @@ dependencies = [
  "aws-sdk-s3",
  "image",
  "lambda_http",
- "lambda_runtime",
+ "lambda_runtime 0.10.0",
  "regex",
  "serde",
  "serde_json",
@@ -1271,12 +1277,12 @@ dependencies = [
 
 [[package]]
 name = "lambda_http"
-version = "0.10.0"
+version = "0.11.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ef8fafd7a4ce0bc6093cf1bed3dcdfc1239c27df1e79e3f2154f4d3299d4f60e"
+checksum = "c89d7aef5484499900f4394280a2b06f02af17cb4a48ff9c35198f8f7423df12"
 dependencies = [
  "aws_lambda_events",
- "base64",
+ "base64 0.22.1",
  "bytes",
  "encoding_rs",
  "futures",
@@ -1285,7 +1291,7 @@ dependencies = [
  "http-body 1.0.0",
  "http-body-util",
  "hyper 1.2.0",
- "lambda_runtime",
+ "lambda_runtime 0.11.2",
  "mime",
  "percent-encoding",
  "pin-project-lite",
@@ -1303,7 +1309,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cc2904c10fbeaf07aa317fc96a0e28e89c80ed12f7949ed06afd7869b21fef32"
 dependencies = [
  "async-stream",
- "base64",
+ "base64 0.21.7",
  "bytes",
  "futures",
  "http 1.0.0",
@@ -1312,7 +1318,7 @@ dependencies = [
  "http-serde",
  "hyper 1.2.0",
  "hyper-util",
- "lambda_runtime_api_client",
+ "lambda_runtime_api_client 0.10.0",
  "serde",
  "serde_json",
  "serde_path_to_error",
@@ -1323,10 +1329,59 @@ dependencies = [
 ]
 
 [[package]]
+name = "lambda_runtime"
+version = "0.11.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ae4606aea513f0e614497c0c4556d0e39f51a8434d9d97e592d32f9e615d4232"
+dependencies = [
+ "async-stream",
+ "base64 0.22.1",
+ "bytes",
+ "futures",
+ "http 1.0.0",
+ "http-body 1.0.0",
+ "http-body-util",
+ "http-serde",
+ "hyper 1.2.0",
+ "hyper-util",
+ "lambda_runtime_api_client 0.11.1",
+ "pin-project",
+ "serde",
+ "serde_json",
+ "serde_path_to_error",
+ "tokio",
+ "tokio-stream",
+ "tower",
+ "tower-layer",
+ "tracing",
+]
+
+[[package]]
 name = "lambda_runtime_api_client"
 version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1364cd67281721d2a9a4444ba555cf4d74a195e647061fa4ccac46e6f5c3b0ae"
+dependencies = [
+ "bytes",
+ "futures-channel",
+ "futures-util",
+ "http 1.0.0",
+ "http-body 1.0.0",
+ "http-body-util",
+ "hyper 1.2.0",
+ "hyper-util",
+ "tokio",
+ "tower",
+ "tower-service",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "lambda_runtime_api_client"
+version = "0.11.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c90a10f094475a34a04da2be11686c4dcfe214d93413162db9ffdff3d3af293a"
 dependencies = [
  "bytes",
  "futures-channel",
@@ -1788,7 +1843,7 @@ version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1c74cae0a4cf6ccbbf5f359f08efdf8ee7e1dc532573bf0db71968cb56b1448c"
 dependencies = [
- "base64",
+ "base64 0.21.7",
 ]
 
 [[package]]
